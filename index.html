@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>麦田守望者</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Maybe a code blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="麦田守望者">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="麦田守望者">
+<meta property="og:description" content="Maybe a code blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="麦田守望者">
+<meta name="twitter:description" content="Maybe a code blog">
+  
+    <link rel="alternate" href="/atom.xml" title="麦田守望者" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">麦田守望者</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">不满足现状，就去努力</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-Start-Blog" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/27/Start-Blog/" class="article-date">
+  <time datetime="2016-03-27T07:32:01.000Z" itemprop="datePublished">2016-03-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/27/Start-Blog/">Start Blog</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>平时看博客，发现很多人csdn，cnblog的博客不更新了，都开始自己建个人博客，反正想着最近要沉淀下来，开始把一些东西写下来，不仅仅是保存到云笔记上，于是开始走起来。</p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>周末闲暇时间，尝试用node js，hexo搭建一个<a href="https://SeaZhang.github.io" target="_blank" rel="external">github博客</a>,<br>中间过程安装hexo过程中，有出现如下问题：</p>
+<p>{ [Error: Cannot find module ‘./build/Release/DTraceProviderBindings’] code: ‘MODULE_NOT_FOUND’ }<br>{ [Error: Cannot find module ‘./build/default/DTraceProviderBindings’] code: ‘MODULE_NOT_FOUND’ }<br>{ [Error: Cannot find module ‘./build/Debug/DTraceProviderBindings’] code: ‘MODULE_NOT_FOUND’ }</p>
+<p>google 一下尝试如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo --no-optional</span><br></pre></td></tr></table></figure>
+<p>中间又报出权限问题，命令前添加sudo</p>
+<p>解决了安装过程问题后，执行如下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
+<p>浏览器打开<a href="http://0.0.0.0:4000/" target="_blank" rel="external">http://0.0.0.0:4000/</a></p>
+<p> 哈哈哈，本机显示出来了</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>本地显示ok后，开始上传到github上去。</p>
+<p>hexo安装 hexo-deployer-git</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>安装成功后进，修改 _config.yml中 </p>
+<p>deploy:<br>  type: git<br>  repo: <repository url=""><br>  branch: [branch]<br>  message: [message]</repository></p>
+<p>配置完成后，<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo clean </span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
+<h2 id="后缀"><a href="#后缀" class="headerlink" title="后缀"></a>后缀</h2><p>建博过程中参考了如下博主的博客文章中的详细描述：<br><a href="http://www.jianshu.com/p/fd878edb95e7" target="_blank" rel="external">http://www.jianshu.com/p/fd878edb95e7</a><br><a href="http://yidao620c.github.io/2016/03/06/hexo.html" target="_blank" rel="external">http://yidao620c.github.io/2016/03/06/hexo.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/03/27/Start-Blog/" data-id="cimactthp0000h3nzvxhkqse4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/github/">github</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/">hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客/">博客</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/博客/" style="font-size: 10px;">博客</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/03/27/Start-Blog/">Start Blog</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Sea<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
