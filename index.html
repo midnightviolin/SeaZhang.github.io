@@ -68,6 +68,51 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Handler-Thread-MessageQueue" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/11/Handler-Thread-MessageQueue/" class="article-date">
+  <time datetime="2018-09-11T02:12:50.000Z" itemprop="datePublished">2018-09-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/11/Handler-Thread-MessageQueue/">Handler Thread MessageQueue</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="异步消息处理"><a href="#异步消息处理" class="headerlink" title="异步消息处理"></a>异步消息处理</h3><p>对于普通线程，执行完 run() 方法内代码后线程就结束了。<br>异步线消息处理线程，线程启动后会进入一个无线循环体这种，每循环异常，从其内部的消息队列中取出一个消息，并回调相应的消息处理函数，执行完成一个消息后则继续执行循环。如果消息队列为空，线程会暂停，直到消息队列中有新的消息。</p>
+<p>异步线程内包含一个消息队列 MessageQueue ,消息先进先出原则进行处理；</p>
+<p>线程的执行体使用无线循环，混合体中从消息中取出消息，根据消息来源，回调相应的消息处理函数；</p>
+<p>其他线程可以向本线程的消息队列中发送消息，消息队列内部的读/写操作必须进行加锁，即消息队列不能同时进行读/写操作。</p>
+<h3 id="Android-系统异步线程的实现方法："><a href="#Android-系统异步线程的实现方法：" class="headerlink" title="Android 系统异步线程的实现方法："></a>Android 系统异步线程的实现方法：</h3><p>在线程内部有一个或多个 Handler 对象，外部城市可以通过该 Handler 对象向线程发送异步消息，消息由 Handler 传递到 MessageQueue 中。线程内部只包含一个 MessageQueue 对象，调用 loop（） 方法，线程主执行函数从 MessageQueue 中读取消息，并回调 Handler 对象中的回调函数 handleMessage（）；</p>
+        
+          <p class="article-more-link">
+            <a href="/2018/09/11/Handler-Thread-MessageQueue/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/11/Handler-Thread-MessageQueue/" data-id="cjlx35o5s0000m5fyjmk4jpzz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Start-Blog" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/03/27/Start-Blog/" class="article-date">
@@ -91,27 +136,16 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>平时看博客，发现很多人csdn，cnblog的博客不更新了，都开始自己建个人博客，反正想着最近要沉淀下来，开始把一些东西写下来，不仅仅是保存到云笔记上，于是开始走起来。</p>
-<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>周末闲暇时间，尝试用node js，hexo搭建一个<a href="https://SeaZhang.github.io" target="_blank" rel="external">github博客</a>,<br>中间过程安装hexo过程中，有出现如下问题：</p>
-<p>{ [Error: Cannot find module ‘./build/Release/DTraceProviderBindings’] code: ‘MODULE_NOT_FOUND’ }<br>{ [Error: Cannot find module ‘./build/default/DTraceProviderBindings’] code: ‘MODULE_NOT_FOUND’ }<br>{ [Error: Cannot find module ‘./build/Debug/DTraceProviderBindings’] code: ‘MODULE_NOT_FOUND’ }</p>
-<p>google 一下尝试如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo --no-optional</span><br></pre></td></tr></table></figure>
-<p>中间又报出权限问题，命令前添加sudo</p>
-<p>解决了安装过程问题后，执行如下指令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-<p>浏览器打开<a href="http://0.0.0.0:4000/" target="_blank" rel="external">http://0.0.0.0:4000/</a></p>
-<p> 哈哈哈，本机显示出来了</p>
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>本地显示ok后，开始上传到github上去。</p>
-<p>hexo安装 hexo-deployer-git</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>安装成功后进，修改 _config.yml中 </p>
-<p>deploy:<br>  type: git<br>  repo: <repository url=""><br>  branch: [branch]<br>  message: [message]</repository></p>
-<p>配置完成后，<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo clean </span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
-<h2 id="后缀"><a href="#后缀" class="headerlink" title="后缀"></a>后缀</h2><p>建博过程中参考了如下博主的博客文章中的详细描述：<br><a href="http://www.jianshu.com/p/fd878edb95e7" target="_blank" rel="external">http://www.jianshu.com/p/fd878edb95e7</a><br><a href="http://yidao620c.github.io/2016/03/06/hexo.html" target="_blank" rel="external">http://yidao620c.github.io/2016/03/06/hexo.html</a></p>
-
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>周末闲暇时间，尝试用node js，hexo搭建一个<a href="https://SeaZhang.github.io">github博客</a>,</p>
+        
+          <p class="article-more-link">
+            <a href="/2016/03/27/Start-Blog/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/03/27/Start-Blog/" data-id="cimad97920000ivnzk7b8g7lo" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/03/27/Start-Blog/" data-id="cjlx35o5w0001m5fy6p4ne84c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/github/">github</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/">hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客/">博客</a></li></ul>
@@ -154,7 +188,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li></ul>
     </div>
   </div>
 
@@ -165,6 +199,10 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/09/11/Handler-Thread-MessageQueue/">Handler Thread MessageQueue</a>
+          </li>
         
           <li>
             <a href="/2016/03/27/Start-Blog/">Start Blog</a>
@@ -182,7 +220,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2016 Sea<br>
+      &copy; 2018 Sea<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
