@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 博客 | 麦田守望者</title>
+  <title>LeakCanary 内存监测库工作原理简析 | 麦田守望者</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Maybe a code blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="麦田守望者">
-<meta property="og:url" content="http://yoursite.com/tags/博客/index.html">
+  <meta name="description" content="关联要点：Activity LifeCycle , WeakReference , ReferenceQueue , GC , heap dump 原理：监听：在应用安装后，会注册应用内所有 Activity 生命周期的监听。通过 Application 的registerActivityLifecycleCallbacks 方法,在 onDestory 方法回调设置 activity 的弱引用，">
+<meta name="keywords" content="LeakCanary,内存泄漏,生命周期,监听,弱引用,heap dump,GC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeakCanary 内存监测库工作原理简析">
+<meta property="og:url" content="http://yoursite.com/2018/09/13/How_does_LeakCanary_work/index.html">
 <meta property="og:site_name" content="麦田守望者">
-<meta property="og:description" content="Maybe a code blog">
+<meta property="og:description" content="关联要点：Activity LifeCycle , WeakReference , ReferenceQueue , GC , heap dump 原理：监听：在应用安装后，会注册应用内所有 Activity 生命周期的监听。通过 Application 的registerActivityLifecycleCallbacks 方法,在 onDestory 方法回调设置 activity 的弱引用，">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-14T07:00:45.907Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="麦田守望者">
-<meta name="twitter:description" content="Maybe a code blog">
+<meta name="twitter:title" content="LeakCanary 内存监测库工作原理简析">
+<meta name="twitter:description" content="关联要点：Activity LifeCycle , WeakReference , ReferenceQueue , GC , heap dump 原理：监听：在应用安装后，会注册应用内所有 Activity 生命周期的监听。通过 Application 的registerActivityLifecycleCallbacks 方法,在 onDestory 方法回调设置 activity 的弱引用，">
   
     <link rel="alternative" href="/atom.xml" title="麦田守望者" type="application/atom+xml">
   
@@ -153,72 +155,222 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-How_does_LeakCanary_work" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/03/27/Start-Blog/" class="archive-article-date">
-  	<time datetime="2016-03-27T07:32:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-03-27</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/03/27/Start-Blog/">Start Blog</a>
+    <h1 class="article-title" itemprop="name">
+      LeakCanary 内存监测库工作原理简析
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/09/13/How_does_LeakCanary_work/" class="archive-article-date">
+  	<time datetime="2018-09-13T10:05:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="关联要点："><a href="#关联要点：" class="headerlink" title="关联要点："></a>关联要点：</h4><p>Activity LifeCycle , WeakReference , ReferenceQueue , GC , heap dump</p>
+<h4 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h4><h5 id="监听："><a href="#监听：" class="headerlink" title="监听："></a>监听：</h5><p>在应用安装后，会注册应用内所有 <code>Activity</code> 生命周期的监听。通过 <code>Application</code> 的<code>registerActivityLifecycleCallbacks</code> 方法,在 <code>onDestory</code> 方法回调设置 activity 的弱引用，并设置监听。</p>
+<h5 id="检测："><a href="#检测：" class="headerlink" title="检测："></a>检测：</h5><p>通过 <code>WeakReference</code> 和 <code>ReferenceQueue</code> 来判断对象是否被系统 GC 回收。</p>
+<ol>
+<li>后台线程检测引用是否被清除，如果没有，调用 GC.</li>
+<li>如果 GC 后，引用还未被清除，做的将 heap 内存到 APP 对应文件系统中的一个 .hprof 文件中.</li>
+<li>在另一个进程中 <code>HeapAnalyzerSevice</code> 有一个 <code>HeapAnalyzer</code> 使用 haha 解析这个文件.</li>
+<li><code>HeapAnalyzer</code> 计算到 GC roots 的最短强引用路径，并确定是否是泄漏。如果是的话，建立导致泄漏的引用链.</li>
+<li>应用链传递到 App 进程中的 <code>DisplayLeakService</code>，并以通知形式展示出来。</li>
+</ol>
+<a id="more"></a>
+<h4 id="应用接入配置："><a href="#应用接入配置：" class="headerlink" title="应用接入配置："></a>应用接入配置：</h4><p>在 Application onCreate 方法中注册初始化操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (DebugConfig.DEBUG)&#123;</span><br><span class="line">    LeakCanary.install(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="关联类及配置："><a href="#关联类及配置：" class="headerlink" title="关联类及配置："></a>关联类及配置：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">内部主要相关类：</span><br><span class="line">LeakCanary</span><br><span class="line">RefWatcher</span><br><span class="line">ActivityRefWatcher	其中有个 installOnIcsPlus(application,refWatcher) 方法</span><br><span class="line">AndroidHeapDumper</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Mainfest.xml 配置服务 和 展示 Activity：</span><br><span class="line"></span><br><span class="line">HeapAnalyzerService</span><br><span class="line">DisplayLeakService</span><br><span class="line">DisplayLeakActivity</span><br></pre></td></tr></table></figure>
+<h4 id="内部实现："><a href="#内部实现：" class="headerlink" title="内部实现："></a>内部实现：</h4><p>以下是库内部大致实现：</p>
+<p>1、 应用启动时在 Application <code>onCreate</code> 方法中进行 初始化<code>LeakCanary.install(this)</code>.</p>
+<p>2、 <code>LeanCanary</code> 类里面的 <code>install</code> 方法中，设置 <code>HeapDump</code> 监听器，实例化 <code>RefWatcher</code>.</p>
+<p>3、 调用 <code>ActivityRefWatcher</code> 的静态方法 <code>installOnIcsPlus</code>，传入 <code>refWatcher</code> 实例 和 <code>application</code>.</p>
+<p>4、 <code>installOnlcsPlus()</code> 方法内部会调用 <code>watchActivities()</code> 方法.</p>
+<p>5、 <code>watchActivities()</code> 会先停止先前监听(如果有)，然后调用 application 的 <code>registerActivityLifecycleCallbacks</code> 注册应用生命周期监听。</p>
+<p>6、 在应用生命周期监听的 <code>onActivityDestroyed(Activity activity)</code>中，调用 <code>refWatcher.watch(activity)</code> 方法.</p>
+<p>7、 watch 方法内 会将 activity 是立即 包装在自定义的弱引用 <code>KeyedWeakReference</code> 中，同事指定一个 <code>ReferenceQueque</code> 队列. 当弱引用持有对象被回收时会进入该队列。</p>
+<p>所以具体做法是在 activity <code>onDestory</code> 方法被调用时，将 activity 对象绑定在弱引用中，然后手动执行一次  GC，然后观察 <code>ReferenceQueue</code> 中是不是包含对应的 activity 对象，如果不包含，说明 activity 被强引用，也就发生内存泄漏.</p>
+<p>8、 在另外一个进程中 <code>HeapAnalyzerSevice</code> 有一个 <code>HeapAnalyzer</code> 使用 <a href="https://github.com/square/haha" target="_blank" rel="noopener">haha</a> 解析这个文件.</p>
+<p>9、 <code>HeapAnalyzer</code> 计算到<code>GC roots</code> 的最短强引用路径，并确定是否是泄漏。如果是的话，建立导致泄漏的引用链.</p>
+<p>10、应用链传递到 App 进程中的 <code>DisplayLeakService</code>，并以通知形式展示出来。</p>
+<h4 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h4><p> 下面大致列举下库部分扩展配置：</p>
+<p>0、应用中针对其他有生命周期的组件，如 Fragment，Service，Dagger 组件等，可以使用 RefWatcher 监听对应的实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RefWatcher refWatcher = LeakCanary.installedRefWatcher();</span><br><span class="line"></span><br><span class="line"><span class="comment">// We expect schrodingerCat to be gone soon (or not), let's watch it.</span></span><br><span class="line">refWatcher.watch(schrodingerCat);</span><br></pre></td></tr></table></figure>
+<p>1、使用 no-op 空包.</p>
+<p>2、自定义通知页面图标 icon 和 label 样式。</p>
+<p>3、定义 heap dump 的数量(默认为 7)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DebugExampleApplication</span> <span class="keyword">extends</span> <span class="title">ExampleApplication</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">installLeakCanary</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    RefWatcher refWatcher = LeakCanary.refWatcher(<span class="keyword">this</span>)</span><br><span class="line">      .maxStoredHeapDumps(<span class="number">42</span>)</span><br><span class="line">      .buildAndInstall();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4、增加文件服务上传</p>
+<p>可以继承 DisplayLeakService，复写 afterDefaultHandling 方法，添加相关文件服务上传功能。</p>
+<p>在 application 中添加相关服务配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DebugExampleApplication</span> <span class="keyword">extends</span> <span class="title">ExampleApplication</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">installLeakCanary</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    RefWatcher refWatcher = LeakCanary.refWatcher(<span class="keyword">this</span>)</span><br><span class="line">      .listenerServiceClass(LeakUploadService.class);</span><br><span class="line">      .buildAndInstall();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外需要在 Manifest.xml 中进行配置。</p>
+<p>5、添加忽略引用检测(可以是 activity)</p>
+<p>实例 ExcludedRefs ，进行忽略配置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DebugExampleApplication</span> <span class="keyword">extends</span> <span class="title">ExampleApplication</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">installLeakCanary</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ExcludedRefs excludedRefs = AndroidExcludedRefs.createAppDefaults()</span><br><span class="line">        .instanceField(<span class="string">"com.example.ExampleClass"</span>, <span class="string">"exampleField"</span>)</span><br><span class="line">        .build();</span><br><span class="line">    RefWatcher refWatcher = LeakCanary.refWatcher(<span class="keyword">this</span>)</span><br><span class="line">      .excludedRefs(excludedRefs)</span><br><span class="line">      .buildAndInstall();</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//可以忽略指定的 activity</span></span><br><span class="line">      registerActivityLifecycleCallbacks(<span class="keyword">new</span> ActivityLifecycleCallbacks() &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityDestroyed</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (activity <span class="keyword">instanceof</span> ThirdPartyActivity) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        refWatcher.watch(activity);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>6、可以设置运行时开关,通过继承复写 HeapDumper </p>
+<p>7、可以介入单元测试,通过 leakcanary-android-instrumentation.</p>
+<p>如果最底层的Activity一直未走<code>onDestroy</code>生命周期(它在 Activity 栈的最底层)，无法检测出它的调用栈的内存泄漏。</p>
+<h4 id="关联类内部的部分方法："><a href="#关联类内部的部分方法：" class="headerlink" title="关联类内部的部分方法："></a>关联类内部的部分方法：</h4><h5 id="LeanCanary-类"><a href="#LeanCanary-类" class="headerlink" title="LeanCanary 类"></a>LeanCanary 类</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LeakCanary</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title">install</span><span class="params">(Application application)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> install(application, DisplayLeakService.class, AndroidExcludedRefs.createAppDefaults().build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title">install</span><span class="params">(Application application, Class&lt;? extends AbstractAnalysisResultService&gt; listenerServiceClass, ExcludedRefs excludedRefs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(isInAnalyzerProcess(application)) &#123;</span><br><span class="line">            <span class="keyword">return</span> RefWatcher.DISABLED;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            enableDisplayLeakActivity(application);</span><br><span class="line">            ServiceHeapDumpListener heapDumpListener = <span class="keyword">new</span> ServiceHeapDumpListener(application, listenerServiceClass);</span><br><span class="line">            RefWatcher refWatcher = androidWatcher(application, heapDumpListener, excludedRefs);</span><br><span class="line">            ActivityRefWatcher.installOnIcsPlus(application, refWatcher);</span><br><span class="line">            <span class="keyword">return</span> refWatcher;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RefWatcher <span class="title">androidWatcher</span><span class="params">(Context context, Listener heapDumpListener, ExcludedRefs excludedRefs)</span> </span>&#123;</span><br><span class="line">        AndroidDebuggerControl debuggerControl = <span class="keyword">new</span> AndroidDebuggerControl();</span><br><span class="line">        AndroidHeapDumper heapDumper = <span class="keyword">new</span> AndroidHeapDumper(context);</span><br><span class="line">        heapDumper.cleanup();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RefWatcher(<span class="keyword">new</span> AndroidWatchExecutor(), debuggerControl, GcTrigger.DEFAULT, heapDumper, heapDumpListener, excludedRefs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">enableDisplayLeakActivity</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        LeakCanaryInternals.setEnabled(context, DisplayLeakActivity.class, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ... 其他部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="ActivityRefWatcher-类："><a href="#ActivityRefWatcher-类：" class="headerlink" title="ActivityRefWatcher 类："></a>ActivityRefWatcher 类：</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@TargetApi</span>(<span class="number">14</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ActivityRefWatcher</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ActivityLifecycleCallbacks lifecycleCallbacks = <span class="keyword">new</span> ActivityLifecycleCallbacks() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityCreated</span><span class="params">(Activity activity, Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityStarted</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityResumed</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityPaused</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityStopped</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivitySaveInstanceState</span><span class="params">(Activity activity, Bundle outState)</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityDestroyed</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">            ActivityRefWatcher.<span class="keyword">this</span>.onActivityDestroyed(activity);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Application application;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RefWatcher refWatcher;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">installOnIcsPlus</span><span class="params">(Application application, RefWatcher refWatcher)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(VERSION.SDK_INT &gt;= <span class="number">14</span>) &#123;</span><br><span class="line">            ActivityRefWatcher activityRefWatcher = <span class="keyword">new</span> ActivityRefWatcher(application, refWatcher);</span><br><span class="line">            activityRefWatcher.watchActivities();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ActivityRefWatcher</span><span class="params">(Application application, RefWatcher refWatcher)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.application = (Application)Preconditions.checkNotNull(application, <span class="string">"application"</span>);</span><br><span class="line">        <span class="keyword">this</span>.refWatcher = (RefWatcher)Preconditions.checkNotNull(refWatcher, <span class="string">"refWatcher"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onActivityDestroyed</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.refWatcher.watch(activity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">watchActivities</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.stopWatchingActivities();</span><br><span class="line">        <span class="keyword">this</span>.application.registerActivityLifecycleCallbacks(<span class="keyword">this</span>.lifecycleCallbacks);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopWatchingActivities</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.application.unregisterActivityLifecycleCallbacks(<span class="keyword">this</span>.lifecycleCallbacks);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="RefWatcher-类："><a href="#RefWatcher-类：" class="headerlink" title="RefWatcher 类："></a>RefWatcher 类：</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">RefWatcher</span><span class="params">(Executor watchExecutor, DebuggerControl debuggerControl, GcTrigger gcTrigger, HeapDumper heapDumper, Listener heapdumpListener, ExcludedRefs excludedRefs)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">this</span>.watchExecutor = (Executor)Preconditions.checkNotNull(watchExecutor, <span class="string">"watchExecutor"</span>);</span><br><span class="line">       <span class="keyword">this</span>.debuggerControl = (DebuggerControl)Preconditions.checkNotNull(debuggerControl, <span class="string">"debuggerControl"</span>);</span><br><span class="line">       <span class="keyword">this</span>.gcTrigger = (GcTrigger)Preconditions.checkNotNull(gcTrigger, <span class="string">"gcTrigger"</span>);</span><br><span class="line">       <span class="keyword">this</span>.heapDumper = (HeapDumper)Preconditions.checkNotNull(heapDumper, <span class="string">"heapDumper"</span>);</span><br><span class="line">       <span class="keyword">this</span>.heapdumpListener = (Listener)Preconditions.checkNotNull(heapdumpListener, <span class="string">"heapdumpListener"</span>);</span><br><span class="line">       <span class="keyword">this</span>.excludedRefs = (ExcludedRefs)Preconditions.checkNotNull(excludedRefs, <span class="string">"excludedRefs"</span>);</span><br><span class="line">       <span class="keyword">this</span>.retainedKeys = <span class="keyword">new</span> CopyOnWriteArraySet();</span><br><span class="line">       <span class="keyword">this</span>.queue = <span class="keyword">new</span> ReferenceQueue();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">watch</span><span class="params">(Object watchedReference)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">this</span>.watch(watchedReference, <span class="string">""</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">watch</span><span class="params">(Object watchedReference, String referenceName)</span> </span>&#123;</span><br><span class="line">       Preconditions.checkNotNull(watchedReference, <span class="string">"watchedReference"</span>);</span><br><span class="line">       Preconditions.checkNotNull(referenceName, <span class="string">"referenceName"</span>);</span><br><span class="line">       <span class="keyword">if</span>(!<span class="keyword">this</span>.debuggerControl.isDebuggerAttached()) &#123;</span><br><span class="line">           <span class="keyword">final</span> <span class="keyword">long</span> watchStartNanoTime = System.nanoTime();</span><br><span class="line">           String key = UUID.randomUUID().toString();</span><br><span class="line">           <span class="keyword">this</span>.retainedKeys.add(key);</span><br><span class="line">           <span class="keyword">final</span> KeyedWeakReference reference = <span class="keyword">new</span> KeyedWeakReference(watchedReference, key, referenceName, <span class="keyword">this</span>.queue);</span><br><span class="line">           <span class="keyword">this</span>.watchExecutor.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">               <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                   RefWatcher.<span class="keyword">this</span>.ensureGone(reference, watchStartNanoTime);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">ensureGone</span><span class="params">(KeyedWeakReference reference, <span class="keyword">long</span> watchStartNanoTime)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">long</span> gcStartNanoTime = System.nanoTime();</span><br><span class="line">       <span class="keyword">long</span> watchDurationMs = TimeUnit.NANOSECONDS.toMillis(gcStartNanoTime - watchStartNanoTime);</span><br><span class="line">       <span class="keyword">this</span>.removeWeaklyReachableReferences();</span><br><span class="line">       <span class="keyword">if</span>(!<span class="keyword">this</span>.gone(reference) &amp;&amp; !<span class="keyword">this</span>.debuggerControl.isDebuggerAttached()) &#123;</span><br><span class="line">           <span class="keyword">this</span>.gcTrigger.runGc();</span><br><span class="line">           <span class="keyword">this</span>.removeWeaklyReachableReferences();</span><br><span class="line">           <span class="keyword">if</span>(!<span class="keyword">this</span>.gone(reference)) &#123;</span><br><span class="line">               <span class="keyword">long</span> startDumpHeap = System.nanoTime();</span><br><span class="line">               <span class="keyword">long</span> gcDurationMs = TimeUnit.NANOSECONDS.toMillis(startDumpHeap - gcStartNanoTime);</span><br><span class="line">               File heapDumpFile = <span class="keyword">this</span>.heapDumper.dumpHeap();</span><br><span class="line">               <span class="keyword">if</span>(heapDumpFile == HeapDumper.NO_DUMP) &#123;</span><br><span class="line">                   <span class="keyword">return</span>;</span><br><span class="line">               &#125;</span><br><span class="line"></span><br><span class="line">               <span class="keyword">long</span> heapDumpDurationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDumpHeap);</span><br><span class="line">               <span class="keyword">this</span>.heapdumpListener.analyze(<span class="keyword">new</span> HeapDump(heapDumpFile, reference.key, reference.name, <span class="keyword">this</span>.excludedRefs, watchDurationMs, gcDurationMs, heapDumpDurationMs));</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="参考文章链接："><a href="#参考文章链接：" class="headerlink" title="参考文章链接："></a>参考文章链接：</h4><p><a href="https://github.com/square/leakcanary/wiki/FAQ#" target="_blank" rel="noopener">LeakCanary FAQ</a></p>
+<p><a href="https://github.com/square/leakcanary/wiki/Customizing-LeakCanary" target="_blank" rel="noopener">Customizing LeakCanary</a></p>
+<p><a href="https://blog.csdn.net/xiaohanluo/article/details/78196755" target="_blank" rel="noopener">LeakCanary原理解析</a></p>
+<p><a href="https://ivanljt.github.io/blog/2017/12/15/%E6%8B%86%E8%BD%AE%E5%AD%90%E7%B3%BB%E5%88%97%E2%80%94%E2%80%94LeakCanary%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" target="_blank" rel="noopener">LeakCanary工作原理</a></p>
+<p><a href="https://allenwu.itscoder.com/leakcanary-source" target="_blank" rel="noopener">深入理解 Android 之 LeakCanary 源码解析</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">LeakCanary</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">博客</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">内存泄漏</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">生命周期</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">github</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">监听</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">弱引用</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">heap dump</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">GC</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/09/13/How_does_LeakCanary_work/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2018/09/11/Handler-Thread-MessageQueue/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Handler Thread MessageQueue</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -241,9 +393,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
