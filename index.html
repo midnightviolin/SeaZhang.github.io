@@ -285,10 +285,10 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="异步消息处理"><a href="#异步消息处理" class="headerlink" title="异步消息处理"></a>异步消息处理</h3><p>对于普通线程，执行完 run() 方法内代码后线程就结束了。<br>异步线消息处理线程，线程启动后会进入一个无线循环体这种，每循环异常，从其内部的消息队列中取出一个消息，并回调相应的消息处理函数，执行完成一个消息后则继续执行循环。如果消息队列为空，线程会暂停，直到消息队列中有新的消息。</p>
-<p>异步线程内包含一个消息队列 MessageQueue ,消息先进先出原则进行处理；</p>
+<p>异步线程内包含一个消息队列 <code>MessageQueue</code> ,消息先进先出原则进行处理；</p>
 <p>线程的执行体使用无线循环，混合体中从消息中取出消息，根据消息来源，回调相应的消息处理函数；</p>
 <p>其他线程可以向本线程的消息队列中发送消息，消息队列内部的读/写操作必须进行加锁，即消息队列不能同时进行读/写操作。</p>
-<h3 id="Android-系统异步线程的实现方法："><a href="#Android-系统异步线程的实现方法：" class="headerlink" title="Android 系统异步线程的实现方法："></a>Android 系统异步线程的实现方法：</h3><p>在线程内部有一个或多个 Handler 对象，外部城市可以通过该 Handler 对象向线程发送异步消息，消息由 Handler 传递到 MessageQueue 中。线程内部只包含一个 MessageQueue 对象，调用 loop（） 方法，线程主执行函数从 MessageQueue 中读取消息，并回调 Handler 对象中的回调函数 handleMessage（）；</p>
+<h3 id="Android-系统异步线程的实现方法："><a href="#Android-系统异步线程的实现方法：" class="headerlink" title="Android 系统异步线程的实现方法："></a>Android 系统异步线程的实现方法：</h3><p>在线程内部有一个或多个 <code>Handler</code> 对象，外部城市可以通过该 <code>Handler</code> 对象向线程发送异步消息，消息由 <code>Handler</code> 传递到 <code>MessageQueue</code> 中。线程内部只包含一个 <code>MessageQueue</code> 对象，调用 <code>loop（）</code> 方法，线程主执行函数从 <code>MessageQueue</code> 中读取消息，并回调 <code>Handler</code> 对象中的回调函数 <code>handleMessage（）</code>；</p>
         
           <a class="article-more-a" href="/2018/09/11/Handler-Thread-MessageQueue/#more">more >></a>
         
