@@ -155,6 +155,150 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-android_use_view-binding" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/26/android_use_view-binding/">Android 使用 view-binding 代替 butterkinfe</a>
+    </h1>
+  
+
+        
+        <a href="/2020/05/26/android_use_view-binding/" class="archive-article-date">
+  	<time datetime="2020-05-26T04:12:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h3><p>近期由于考虑对一批使用依赖库版本进行集中更新一次，发现原有常用的 UI 注入库 JakeWharton 大神的 <a href="https://github.com/JakeWharton/butterknife" target="_blank" rel="noopener">butterkinfe</a> ，发现 README 页面说该库已经禁用不再维护，让转到 <a href="https://developer.android.google.cn/topic/libraries/view-binding?hl=zh-cn" target="_blank" rel="noopener">view-binding</a> 官方库上。</p>
+<h3 id="库功能介绍："><a href="#库功能介绍：" class="headerlink" title="库功能介绍："></a>库功能介绍：</h3><p>在模块中启用视图绑定后，系统会为该模块中每个 XML 布局文件生成一个绑定类。绑定类实例包含对相应布局中<strong>具有 ID</strong> 的所有视图的直接饮用。</p>
+<p>大多数情况下，视图绑定会替代 <code>findViewById</code> 。</p>
+<h3 id="使用说明："><a href="#使用说明：" class="headerlink" title="使用说明："></a>使用说明：</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>在 <a href="https://developer.android.com/studio/preview?hl=zh-cn" target="_blank" rel="noopener">Android Studio 3.6 Canary 11 及更高版本</a> 中可用。</p>
+<p>视图绑定可以按模块进行启用，要在某个模块中启用，请在模块 <code>build.gradle</code> 文件中添加启用配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">        ...</span><br><span class="line">        viewBinding &#123;</span><br><span class="line">            enabled = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如果不希望在某个布局中使用，可以在该布局文件根视图中添加 <code>tools:viewBindingIgnore=&quot;true&quot;</code> </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span></span></span><br><span class="line"><span class="tag">            <span class="attr">...</span></span></span><br><span class="line"><span class="tag">            <span class="attr">tools:viewBindingIgnore</span>=<span class="string">"true"</span> &gt;</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2020/05/26/android_use_view-binding/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">View-binding</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视图绑定</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      <span id="busuanzi_container_page_pv">
+        阅读<span id="busuanzi_value_page_pv"></span>次
+      </span>
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/26/android_use_view-binding/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-fix_SecureRandom_by_google_solution" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-使用-SecureRandom"><a href="#Android-使用-SecureRandom" class="headerlink" title="Android 使用 SecureRandom"></a>Android 使用 SecureRandom</h1>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      <span id="busuanzi_container_page_pv">
+        阅读<span id="busuanzi_value_page_pv"></span>次
+      </span>
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/12/16/fix_SecureRandom_by_google_solution/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-How_does_LeakCanary_work" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -468,7 +612,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Sea
+    		&copy; 2020 Sea
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -592,6 +736,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">github</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">View-binding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">视图绑定</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: Handler | 麦田守望者</title>
+  <title>Android 使用 view-binding 代替 butterkinfe | 麦田守望者</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Maybe a code blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="麦田守望者">
-<meta property="og:url" content="http://yoursite.com/tags/Handler/index.html">
+  <meta name="description" content="背景：近期由于考虑对一批使用依赖库版本进行集中更新一次，发现原有常用的 UI 注入库 JakeWharton 大神的 butterkinfe ，发现 README 页面说该库已经禁用不再维护，让转到 view-binding 官方库上。 库功能介绍：在模块中启用视图绑定后，系统会为该模块中每个 XML 布局文件生成一个绑定类。绑定类实例包含对相应布局中具有 ID 的所有视图的直接饮用。 大多数情况">
+<meta name="keywords" content="Android,View-binding,视图绑定">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 使用 view-binding 代替 butterkinfe">
+<meta property="og:url" content="http://yoursite.com/2020/05/26/android_use_view-binding/index.html">
 <meta property="og:site_name" content="麦田守望者">
-<meta property="og:description" content="Maybe a code blog">
+<meta property="og:description" content="背景：近期由于考虑对一批使用依赖库版本进行集中更新一次，发现原有常用的 UI 注入库 JakeWharton 大神的 butterkinfe ，发现 README 页面说该库已经禁用不再维护，让转到 view-binding 官方库上。 库功能介绍：在模块中启用视图绑定后，系统会为该模块中每个 XML 布局文件生成一个绑定类。绑定类实例包含对相应布局中具有 ID 的所有视图的直接饮用。 大多数情况">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/assets/blogImages/app-build-generated.png">
+<meta property="og:image" content="http://yoursite.com/assets/blogImages/app-build-intermediates.png">
+<meta property="og:updated_time" content="2020-05-26T08:16:29.544Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="麦田守望者">
-<meta name="twitter:description" content="Maybe a code blog">
+<meta name="twitter:title" content="Android 使用 view-binding 代替 butterkinfe">
+<meta name="twitter:description" content="背景：近期由于考虑对一批使用依赖库版本进行集中更新一次，发现原有常用的 UI 注入库 JakeWharton 大神的 butterkinfe ，发现 README 页面说该库已经禁用不再维护，让转到 view-binding 官方库上。 库功能介绍：在模块中启用视图绑定后，系统会为该模块中每个 XML 布局文件生成一个绑定类。绑定类实例包含对相应布局中具有 ID 的所有视图的直接饮用。 大多数情况">
+<meta name="twitter:image" content="http://yoursite.com/assets/blogImages/app-build-generated.png">
   
     <link rel="alternative" href="/atom.xml" title="麦田守望者" type="application/atom+xml">
   
@@ -153,76 +158,205 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-android_use_view-binding" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/09/11/Handler-Thread-MessageQueue/" class="archive-article-date">
-  	<time datetime="2018-09-11T02:12:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-11</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/09/11/Handler-Thread-MessageQueue/">Handler Thread MessageQueue</a>
+    <h1 class="article-title" itemprop="name">
+      Android 使用 view-binding 代替 butterkinfe
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2020/05/26/android_use_view-binding/" class="archive-article-date">
+  	<time datetime="2020-05-26T04:12:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h3><p>近期由于考虑对一批使用依赖库版本进行集中更新一次，发现原有常用的 UI 注入库 JakeWharton 大神的 <a href="https://github.com/JakeWharton/butterknife" target="_blank" rel="noopener">butterkinfe</a> ，发现 README 页面说该库已经禁用不再维护，让转到 <a href="https://developer.android.google.cn/topic/libraries/view-binding?hl=zh-cn" target="_blank" rel="noopener">view-binding</a> 官方库上。</p>
+<h3 id="库功能介绍："><a href="#库功能介绍：" class="headerlink" title="库功能介绍："></a>库功能介绍：</h3><p>在模块中启用视图绑定后，系统会为该模块中每个 XML 布局文件生成一个绑定类。绑定类实例包含对相应布局中<strong>具有 ID</strong> 的所有视图的直接饮用。</p>
+<p>大多数情况下，视图绑定会替代 <code>findViewById</code> 。</p>
+<h3 id="使用说明："><a href="#使用说明：" class="headerlink" title="使用说明："></a>使用说明：</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>在 <a href="https://developer.android.com/studio/preview?hl=zh-cn" target="_blank" rel="noopener">Android Studio 3.6 Canary 11 及更高版本</a> 中可用。</p>
+<p>视图绑定可以按模块进行启用，要在某个模块中启用，请在模块 <code>build.gradle</code> 文件中添加启用配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">        ...</span><br><span class="line">        viewBinding &#123;</span><br><span class="line">            enabled = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如果不希望在某个布局中使用，可以在该布局文件根视图中添加 <code>tools:viewBindingIgnore=&quot;true&quot;</code> </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span></span></span><br><span class="line"><span class="tag">            <span class="attr">...</span></span></span><br><span class="line"><span class="tag">            <span class="attr">tools:viewBindingIgnore</span>=<span class="string">"true"</span> &gt;</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>如上说，模块启用视图绑定功能后，会为该模块中包含每个 XML 布局文件各生成一个绑定类。生成的绑定类名称为对应该 XML 文件名转换为驼峰式大小写，并在末尾添加“Binding”一词。</p>
+<p>例如，模块中一个布局名为为 <code>activity_spi.xml</code> :</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">androidx.constraintlayout.widget.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/go_spi"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">"ServiceLoader Test"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintRight_toRightOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">androidx.constraintlayout.widget.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>视图绑定库会生成一个类名为 <code>ActivitySpiBinding</code>,该类有一个字段：名为 goSpi 的 TextView。</p>
+<p>每个视图绑定类中还会包含一个 <code>getRoot()</code> 方法，用于对相应布局的根视图提供直接引用。在这个实例中会 <code>ActivitySpiBinding</code> 类中返回一个 <code>getRoot()</code> 方法返回 <code>ConstraintLayout</code> 根视图。</p>
+<p>具体获取绑定类实例可以通过 <code>inflate()</code>方法。通常调用 <code>setContentView()</code> 将绑定视图的根视图作为参数进行传递，设置到屏幕活动视图上。</p>
+<p>例如以上 <code>activity_spi.xml</code> 对应 Activity 的 <code>SPIPlayActivity</code> 中:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ActivitySpiBinding binding;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> ViewBinding <span class="title">viewBinding</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      binding = ActivitySpiBinding.inflate(getLayoutInflater());</span><br><span class="line">      <span class="keyword">return</span> binding;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>现在绑定类的实例就可以用于其中的视图：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binding.goSpi.setOnClickListener(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="与-findViewById-的区别"><a href="#与-findViewById-的区别" class="headerlink" title="与 findViewById 的区别"></a>与 findViewById 的区别</h3><p>与使用 <code>findViewById</code> 相比，视图绑定具有一些很显著的优点：</p>
+<ul>
+<li><strong>Null 安全</strong>：由于视图绑定会创建对视图的直接引用，因此不存在因视图 ID 无效而引发 Null 指针异常的风险。此外，如果视图仅出现在布局的某些配置中，则绑定类中包含其引用的字段会使用 <code>@Nullable</code> 标记。</li>
+<li><strong>类型安全</strong>：每个绑定类中的字段均具有与它们在 XML 文件中引用的视图相匹配的类型。这意味着不存在发生类转换异常的风险。</li>
+</ul>
+<p>这些差异意味着布局和代码之间的不兼容性可能会导致编译版本在编译时（而非运行时）失败。</p>
+<h3 id="与数据绑定库的区别"><a href="#与数据绑定库的区别" class="headerlink" title="与数据绑定库的区别"></a>与数据绑定库的区别</h3><p>视图绑定和<a href="https://developer.android.com/topic/libraries/data-binding?hl=zh-cn" target="_blank" rel="noopener">数据绑定库</a>均会生成可用于直接引用视图的绑定类。不过，这两者之间存在明显差异：</p>
+<ul>
+<li>数据绑定库仅处理使用 <code>&lt;layout&gt;</code> 代码创建的数据绑定布局。</li>
+<li>视图绑定不支持布局变量或布局表达式，因此它不能用于在 XML 中将布局与数据绑定。</li>
+</ul>
+<h3 id="大致机制梳理"><a href="#大致机制梳理" class="headerlink" title="大致机制梳理"></a>大致机制梳理</h3><p>视图绑定库不是类似 Jetpack 一个官方独立的 Lib 库的形式通过在显式引入方式进行使用。它是 Android Studio 提供的功能，在对应工程配置文件中进行一个属性配置后，build 工程后 Android Studio 会自动为启用模块中 XML 生成对应的绑定类，因此该功能为项目工程编译时自动生成相关绑定类，立等可取。</p>
+<p>例如上面的 <code>activity_spi.xml</code> 布局文件，在工程编译完成后会自动生成如下文件：</p>
+<p>会在工程 build 目录下对应 </p>
+<p>在 <code>app/build/generated/data_binding_base_class_source_out/debug/out/org/sea/learn/databinding/</code> 生成一个 <code>ActivitySpiBinding.java</code> 文件。</p>
+<p><img src="/assets/blogImages/app-build-generated.png" alt="image-20200526145036287"></p>
+<p>这里贴下生成的文件内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Generated by view binder compiler. Do not edit!</span></span><br><span class="line"><span class="keyword">package</span> org.sea.learn.databinding;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.view.LayoutInflater;</span><br><span class="line"><span class="keyword">import</span> android.view.View;</span><br><span class="line"><span class="keyword">import</span> android.view.ViewGroup;</span><br><span class="line"><span class="keyword">import</span> android.widget.Button;</span><br><span class="line"><span class="keyword">import</span> androidx.annotation.NonNull;</span><br><span class="line"><span class="keyword">import</span> androidx.annotation.Nullable;</span><br><span class="line"><span class="keyword">import</span> androidx.constraintlayout.widget.ConstraintLayout;</span><br><span class="line"><span class="keyword">import</span> androidx.viewbinding.ViewBinding;</span><br><span class="line"><span class="keyword">import</span> java.lang.NullPointerException;</span><br><span class="line"><span class="keyword">import</span> java.lang.Override;</span><br><span class="line"><span class="keyword">import</span> java.lang.String;</span><br><span class="line"><span class="keyword">import</span> org.sea.learn.R;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ActivitySpiBinding</span> <span class="keyword">implements</span> <span class="title">ViewBinding</span> </span>&#123;</span><br><span class="line">  <span class="meta">@NonNull</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ConstraintLayout rootView;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@NonNull</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">final</span> Button goSpi;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">ActivitySpiBinding</span><span class="params">(@NonNull ConstraintLayout rootView, @NonNull Button goSpi)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.rootView = rootView;</span><br><span class="line">    <span class="keyword">this</span>.goSpi = goSpi;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="meta">@NonNull</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ConstraintLayout <span class="title">getRoot</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> rootView;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@NonNull</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ActivitySpiBinding <span class="title">inflate</span><span class="params">(@NonNull LayoutInflater inflater)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> inflate(inflater, <span class="keyword">null</span>, <span class="keyword">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@NonNull</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ActivitySpiBinding <span class="title">inflate</span><span class="params">(@NonNull LayoutInflater inflater,</span></span></span><br><span class="line"><span class="function"><span class="params">      @Nullable ViewGroup parent, <span class="keyword">boolean</span> attachToParent)</span> </span>&#123;</span><br><span class="line">    View root = inflater.inflate(R.layout.activity_spi, parent, <span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">if</span> (attachToParent) &#123;</span><br><span class="line">      parent.addView(root);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> bind(root);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@NonNull</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ActivitySpiBinding <span class="title">bind</span><span class="params">(@NonNull View rootView)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// The body of this method is generated in a way you would not otherwise write.</span></span><br><span class="line">    <span class="comment">// This is done to optimize the compiled bytecode for size and performance.</span></span><br><span class="line">    String missingId;</span><br><span class="line">    missingId: &#123;</span><br><span class="line">      Button goSpi = rootView.findViewById(R.id.go_spi);</span><br><span class="line">      <span class="keyword">if</span> (goSpi == <span class="keyword">null</span>) &#123;</span><br><span class="line">        missingId = <span class="string">"goSpi"</span>;</span><br><span class="line">        <span class="keyword">break</span> missingId;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> ActivitySpiBinding((ConstraintLayout) rootView, goSpi);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"Missing required view with ID: "</span>.concat(missingId));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出该绑定类内部在调用 <code>inflate</code> 提供根视图实例时进行页面 <code>inflate</code>初始化布局和布局元素 <code>findViewById</code>初始化赋值操作。</p>
+<p>在  <code>build/intermediates</code> 目录下面有如下几个相关子目录：</p>
+<p><img src="/assets/blogImages/app-build-intermediates.png" alt="image-20200526145247248"></p>
+<p>在目录  <code>app/build/intermediates/data_binding_base_class_log_artifact/debug/out/</code> 下面生成一个 <code>org.sea.learn-binding_classes.json</code> 文件。文件内容如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"mappings"</span>: &#123;</span><br><span class="line">    <span class="attr">"activity_main"</span>: &#123;</span><br><span class="line">      <span class="attr">"qualified_name"</span>: <span class="string">"org.sea.learn.databinding.ActivityMainBinding"</span>,</span><br><span class="line">      <span class="attr">"module_package"</span>: <span class="string">"org.sea.learn.databinding"</span>,</span><br><span class="line">      <span class="attr">"variables"</span>: &#123;&#125;,</span><br><span class="line">      <span class="attr">"implementations"</span>: []</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"activity_dagger"</span>: &#123;</span><br><span class="line">      <span class="attr">"qualified_name"</span>: <span class="string">"org.sea.learn.databinding.ActivityDaggerBinding"</span>,</span><br><span class="line">      <span class="attr">"module_package"</span>: <span class="string">"org.sea.learn.databinding"</span>,</span><br><span class="line">      <span class="attr">"variables"</span>: &#123;&#125;,</span><br><span class="line">      <span class="attr">"implementations"</span>: []</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"activity_spi"</span>: &#123;</span><br><span class="line">      <span class="attr">"qualified_name"</span>: <span class="string">"org.sea.learn.databinding.ActivitySpiBinding"</span>,</span><br><span class="line">      <span class="attr">"module_package"</span>: <span class="string">"org.sea.learn.databinding"</span>,</span><br><span class="line">      <span class="attr">"variables"</span>: &#123;&#125;,</span><br><span class="line">      <span class="attr">"implementations"</span>: []</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该文件记录模块内进行视图绑定生成的绑定类相关信息。</p>
+<p>在目录  <code>app/build/intermediates/data_binding_layout_info_type_merge/debug/out/</code> 下面生成一个  <code>activity_spi-layout.xml</code>  文件，文件内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="utf-8" standalone="yes"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">Layout</span> <span class="attr">directory</span>=<span class="string">"layout"</span> <span class="attr">filePath</span>=<span class="string">"app/src/main/res/layout/activity_spi.xml"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">isBindingData</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">isMerge</span>=<span class="string">"false"</span> <span class="attr">layout</span>=<span class="string">"activity_spi"</span> <span class="attr">modulePackage</span>=<span class="string">"org.sea.learn"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">rootNodeType</span>=<span class="string">"androidx.constraintlayout.widget.ConstraintLayout"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Targets</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Target</span> <span class="attr">tag</span>=<span class="string">"layout/activity_spi_0"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">view</span>=<span class="string">"androidx.constraintlayout.widget.ConstraintLayout"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Expressions</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">location</span> <span class="attr">endLine</span>=<span class="string">"17"</span> <span class="attr">endOffset</span>=<span class="string">"51"</span> <span class="attr">startLine</span>=<span class="string">"1"</span> <span class="attr">startOffset</span>=<span class="string">"0"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Target</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Target</span> <span class="attr">id</span>=<span class="string">"@+id/go_spi"</span> <span class="attr">view</span>=<span class="string">"Button"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Expressions</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">location</span> <span class="attr">endLine</span>=<span class="string">"15"</span> <span class="attr">endOffset</span>=<span class="string">"9"</span> <span class="attr">startLine</span>=<span class="string">"6"</span> <span class="attr">startOffset</span>=<span class="string">"4"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Targets</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Layout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>该文件记录对应布局文件下视图组件里布局名称，归属包名路径，根视图类型等相关信息。</p>
+<p>另外同样在目录  <code>app/build/intermediates/</code> 目录下面的子目录  <code>data_binding_base_class_logs_dependency_artifacts</code>，<code>data_binding_dependency_artifacts</code> 两个目录也相关编译生成目录，目前暂时未发现里面有生成对应文件存在。</p>
+<p>大致做个小结：视图绑定 <code>view-binding</code> 是 Android Studio 提供的视图绑定功能，模块添加启用配置后，编译工程后，相关 xml 布局均会生成视图绑定类，里面包含了视图初始化，视图内各组件子视图初始化，供具体布局视图中进行使用。具体深层次工程编译生成相关目录文件及对应映射关系及最终生产视图绑定类轮询生成的过程有待进一步发掘。</p>
+<h3 id="参考资料链接："><a href="#参考资料链接：" class="headerlink" title="参考资料链接："></a>参考资料链接：</h3><p> <a href="https://developer.android.google.cn/topic/libraries/view-binding?hl=zh-cn" target="_blank" rel="noopener">view-binding</a> </p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Handler</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Thread</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">View-binding</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">MessageQueue</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Looper</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ThreadLocal</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">视图绑定</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      <span id="busuanzi_container_page_pv">
+        阅读<span id="busuanzi_value_page_pv"></span>次
+      </span>
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/05/26/android_use_view-binding/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/12/16/fix_SecureRandom_by_google_solution/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -253,9 +387,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
