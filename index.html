@@ -155,6 +155,103 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android-Wifi-Debugging" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/06/11/Android-Wifi-Debugging/">Android 无线真机调试</a>
+    </h1>
+  
+
+        
+        <a href="/2020/06/11/Android-Wifi-Debugging/" class="archive-article-date">
+  	<time datetime="2020-06-11T04:12:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>对于手机前端开发，总会使用到各种设备，日常常用开发机器电脑，手机这些，配合开发调试过程就要用到各种线，对于 Android 手机开发的，就要用到 Micro USB 和 Type C 新老手机对应的手机线。特别是机型适配的时候，桌子上是这样（暂无无图。。。）的凌乱，很早前听说过无线调试（WIFI Debugging），也尝试过很多对应 IDE 无线调试插件，总是有各种各样的问题，于是就继续凌乱中。</p>
+<p>最近无意间看官方文档时看到有命令行工具 adb 章节中关于 Wear OS 设备调试的内容，看到了<a href="https://developer.android.google.cn/studio/command-line/adb#wireless" target="_blank" rel="noopener">通过 WLAN 连接到设备</a>章节说到无线调试的相关内容，于是，你知道的，我是一个整洁的人，正如一手出来的整洁代码（大脸不惭），于是我就抱着试一试的态度开始这个简短的过程。</p>
+<h3 id="开始步骤"><a href="#开始步骤" class="headerlink" title="开始步骤"></a>开始步骤</h3><h5 id="0-保证-Android-设备和-IDE-所在电脑主机都连到同一个-WLAN-网络。"><a href="#0-保证-Android-设备和-IDE-所在电脑主机都连到同一个-WLAN-网络。" class="headerlink" title="0. 保证 Android 设备和 IDE 所在电脑主机都连到同一个 WLAN 网络。"></a>0. 保证 Android 设备和 IDE 所在电脑主机都连到同一个 WLAN 网络。</h5><p>注意项：并非所有接入点都可以。可能需要配置防火墙支持 adb 接入点。如果 Wear OS 设备，要关闭与该设备配对的手机上的蓝牙。</p>
+<h5 id="1-使用-USB-数据线将设备链接到主机。"><a href="#1-使用-USB-数据线将设备链接到主机。" class="headerlink" title="1.使用 USB 数据线将设备链接到主机。"></a>1.使用 USB 数据线将设备链接到主机。</h5><p>（不是说好无线调试呢，怎么连上线了呢，可能手机快没电了（假装说服）。来都来了连一下啦）</p>
+<h5 id="2-设置目标设备以监听端口-5555-上的-TCP-IP-连接。"><a href="#2-设置目标设备以监听端口-5555-上的-TCP-IP-连接。" class="headerlink" title="2. 设置目标设备以监听端口 5555 上的 TCP/IP 连接。"></a>2. 设置目标设备以监听端口 5555 上的 TCP/IP 连接。</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb tcpip 5555</span><br></pre></td></tr></table></figure>
+<h5 id="3-拔掉连接的-USB-数据线。"><a href="#3-拔掉连接的-USB-数据线。" class="headerlink" title="3. 拔掉连接的 USB 数据线。"></a>3. 拔掉连接的 USB 数据线。</h5><p>（拔掉，拔掉，通通拔掉）</p>
+<h5 id="4-找到-Android-设备的-IP-地址。"><a href="#4-找到-Android-设备的-IP-地址。" class="headerlink" title="4. 找到 Android 设备的 IP 地址。"></a>4. 找到 Android 设备的 IP 地址。</h5><p>一般在<code>手机 - 设置 - 关于</code> 中相应的位置可以找到本机的 ip 地址。</p>
+<h5 id="5-通过-IP-地址连接到设备"><a href="#5-通过-IP-地址连接到设备" class="headerlink" title="5. 通过 IP 地址连接到设备"></a>5. 通过 IP 地址连接到设备</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb connect device_ip_address</span><br></pre></td></tr></table></figure>
+<p>然后可以通过日常的 adb 命令确认是否连接上设备：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br></pre></td></tr></table></figure>
+<p>现在如果一切顺利，应该可以在 Android Studio 的 Logcat 的窗口看到手机的日志打印信息了。<br>
+        
+          <a class="article-more-a" href="/2020/06/11/Android-Wifi-Debugging/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Debug</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WIFI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      <span id="busuanzi_container_page_pv">
+        阅读<span id="busuanzi_value_page_pv"></span>次
+      </span>
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/06/11/Android-Wifi-Debugging/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-android_use_view-binding" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -653,6 +750,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Debug</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">WIFI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Handler</a>
               </li>
              
@@ -714,10 +823,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">GC</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
